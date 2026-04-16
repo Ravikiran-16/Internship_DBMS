@@ -1,0 +1,74 @@
+{% extends "admin/layout.html" %}
+{% block title %}Companies — PlacementHub Admin{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Companies</h2>
+        <p>Manage recruiting companies and job roles.</p>
+    </div>
+    <a href="/admin/companies/add" class="btn btn-primary">
+        <i class="bi bi-plus me-2"></i>Add Company
+    </a>
+</div>
+
+{% if success %}<div class="alert alert-success mb-4"><i class="bi bi-check-circle me-2"></i>{{ success }}</div>{% endif %}
+{% if error %}<div class="alert alert-danger mb-4"><i class="bi bi-exclamation-circle me-2"></i>{{ error }}</div>{% endif %}
+
+<div class="row g-4">
+    {% if companies %}
+    {% for company in companies %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body" style="padding:24px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+                    <div>
+                        <h5 style="margin-bottom:4px;">{{ company.name }}</h5>
+                        <div style="color:var(--text-muted);font-size:0.8rem;">
+                            <i class="bi bi-briefcase me-1"></i>{{ company.industry or 'N/A' }}
+                        </div>
+                    </div>
+                    <a href="/admin/companies/{{ company.company_id }}/edit" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:0.83rem;margin-bottom:16px;">
+                    {% if company.location %}
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="bi bi-geo-alt" style="color:var(--text-muted);width:16px;"></i>
+                        <span>{{ company.location }}</span>
+                    </div>
+                    {% endif %}
+                    {% if company.website %}
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="bi bi-globe" style="color:var(--text-muted);width:16px;"></i>
+                        <span style="color:var(--accent);">{{ company.website }}</span>
+                    </div>
+                    {% endif %}
+                    {% if company.hr_contact %}
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="bi bi-envelope" style="color:var(--text-muted);width:16px;"></i>
+                        <span>{{ company.hr_contact }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <a href="/admin/companies/{{ company.company_id }}/job-roles" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-list-ul me-1"></i>Manage Job Roles
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div style="text-align:center;padding:80px;color:var(--text-muted);">
+            <i class="bi bi-building" style="font-size:3rem;display:block;margin-bottom:16px;opacity:0.4;"></i>
+            <h5>No companies added yet</h5>
+            <a href="/admin/companies/add" class="btn btn-primary mt-3">Add First Company</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

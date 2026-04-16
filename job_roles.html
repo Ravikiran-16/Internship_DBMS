@@ -1,0 +1,51 @@
+{% extends "admin/layout.html" %}
+{% block title %}Job Roles — PlacementHub Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+    <a href="/admin/companies" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;"><i class="bi bi-arrow-left me-1"></i>Back to Companies</a>
+    <h2 class="mt-2">Job Roles — {{ company.name }}</h2>
+    <p>Manage roles offered by this company.</p>
+</div>
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-plus-circle me-2 text-accent"></i>Add Job Role</div>
+            <div class="card-body" style="padding:28px;">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12"><label class="form-label">Role Name *</label>
+                            <input type="text" class="form-control" name="role_name" placeholder="e.g. Software Engineer" required></div>
+                        <div class="col-md-6"><label class="form-label">Min CGPA *</label>
+                            <input type="number" class="form-control" name="min_cgpa" step="0.1" min="0" max="10" placeholder="7.5" required></div>
+                        <div class="col-md-6"><label class="form-label">Job Type *</label>
+                            <select class="form-select" name="job_type" required>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Part-time">Part-time</option>
+                            </select></div>
+                        <div class="col-12"><label class="form-label">Salary Range</label>
+                            <input type="text" class="form-control" name="salary_range" placeholder="e.g. 10-15 LPA"></div>
+                        <div class="col-12"><label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Role description..."></textarea></div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus me-2"></i>Add Role</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-list-ul me-2 text-accent"></i>Existing Roles</div>
+            <div class="card-body" style="padding:0;">
+                <div style="text-align:center;padding:48px;color:var(--text-muted);">
+                    <i class="bi bi-briefcase" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:0.4;"></i>
+                    Add roles using the form on the left.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

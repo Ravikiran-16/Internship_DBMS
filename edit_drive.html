@@ -1,0 +1,41 @@
+{% extends "admin/layout.html" %}
+{% block title %}Edit Drive — PlacementHub Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+    <a href="/admin/drives" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;"><i class="bi bi-arrow-left me-1"></i>Back to Drives</a>
+    <h2 class="mt-2">Edit Placement Drive</h2>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-pencil me-2 text-accent"></i>Update Drive</div>
+            <div class="card-body" style="padding:32px;">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-control" value="{{ drive.company_name }}" disabled style="opacity:0.6;">
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Drive Date</label>
+                            <input type="date" class="form-control" name="drive_date" value="{{ drive.drive_date }}"></div>
+                        <div class="col-md-6"><label class="form-label">Deadline</label>
+                            <input type="date" class="form-control" name="deadline" value="{{ drive.deadline }}"></div>
+                        <div class="col-md-6"><label class="form-label">Mode</label>
+                            <select class="form-select" name="mode">
+                                {% for m in ['Online','Offline','Hybrid'] %}
+                                <option value="{{ m }}" {% if drive.mode == m %}selected{% endif %}>{{ m }}</option>
+                                {% endfor %}
+                            </select></div>
+                        <div class="col-md-6"><label class="form-label">Venue</label>
+                            <input type="text" class="form-control" name="venue" value="{{ drive.venue or '' }}"></div>
+                        <div class="col-12 mt-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-2"></i>Save Changes</button>
+                            <a href="/admin/drives" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Login — PlacementHub{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;">
+    <!-- Background decoration -->
+    <div style="position:absolute;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,0.12) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-200px;left:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(255,101,132,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <div style="width:100%;max-width:440px;padding:24px;">
+        <div style="text-align:center;margin-bottom:40px;">
+            <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:8px;">
+                <span style="color:var(--accent);">Placement</span>Hub
+            </div>
+            <p style="color:var(--text-muted);font-size:0.9rem;">Sign in to your account</p>
+        </div>
+
+        <!-- Tab switcher -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;display:flex;margin-bottom:28px;">
+            <button onclick="switchTab('student')" id="tab-student" class="tab-btn active" style="flex:1;border:none;border-radius:9px;padding:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;background:var(--accent);color:#fff;">
+                <i class="bi bi-person me-2"></i>Student
+            </button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="tab-btn" style="flex:1;border:none;border-radius:9px;padding:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--text-muted);">
+                <i class="bi bi-shield-lock me-2"></i>Admin / TPO
+            </button>
+        </div>
+
+        <div class="card" style="border-radius:20px;">
+            <div class="card-body" style="padding:32px;">
+                <form id="loginForm" method="POST">
+                    <input type="hidden" name="user_type" id="user_type" value="student">
+
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        <div style="position:relative;">
+                            <i class="bi bi-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                            <input type="email" class="form-control" name="email" placeholder="you@example.com" required style="padding-left:40px;">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <div style="position:relative;">
+                            <i class="bi bi-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                            <input type="password" class="form-control" name="password" placeholder="••••••••" required style="padding-left:40px;" id="passwordInput">
+                            <button type="button" onclick="togglePassword()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if error %}
+                    <div class="alert alert-danger mb-4">
+                        <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100" style="padding:12px;font-size:1rem;font-family:'Syne',sans-serif;font-weight:700;">
+                        Sign In <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </form>
+
+                <div style="text-align:center;margin-top:24px;color:var(--text-muted);font-size:0.88rem;">
+                    Don't have an account? 
+                    <a href="/register" style="color:var(--accent);font-weight:600;text-decoration:none;">Register here</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:24px;color:var(--text-muted);font-size:0.8rem;">
+            &copy; 2025 PlacementHub · All rights reserved
+        </div>
+    </div>
+</div>
+
+<style>
+.tab-btn { transition: all 0.2s !important; }
+</style>
+
+<script>
+function switchTab(type) {
+    document.getElementById('user_type').value = type;
+    const studentBtn = document.getElementById('tab-student');
+    const adminBtn = document.getElementById('tab-admin');
+    if (type === 'student') {
+        studentBtn.style.background = 'var(--accent)';
+        studentBtn.style.color = '#fff';
+        adminBtn.style.background = 'transparent';
+        adminBtn.style.color = 'var(--text-muted)';
+    } else {
+        adminBtn.style.background = 'var(--accent)';
+        adminBtn.style.color = '#fff';
+        studentBtn.style.background = 'transparent';
+        studentBtn.style.color = 'var(--text-muted)';
+    }
+}
+
+function togglePassword() {
+    const input = document.getElementById('passwordInput');
+    const icon = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+</script>
+{% endblock %}

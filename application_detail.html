@@ -1,0 +1,121 @@
+{% extends "student/layout.html" %}
+{% block title %}Application Details — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="/student/applications" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">
+        <i class="bi bi-arrow-left me-1"></i>Back to Applications
+    </a>
+    <h2 class="mt-2">Application #{{ application.application_id }}</h2>
+    <p>{{ application.company_name }} · Applied {{ application.applied_at[:10] if application.applied_at else '' }}</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <!-- Status Timeline -->
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-clock-history me-2 text-accent"></i>Application Status</div>
+            <div class="card-body">
+                <div style="display:flex;align-items:center;gap:0;">
+                    {% set stages = ['Applied', 'Shortlisted', 'Interview', 'Selected'] %}
+                    {% set current = application.status or 'Applied' %}
+                    {% for stage in stages %}
+                    {% set active = stage == current or (current == 'Rejected' and stage == 'Applied') %}
+                    {% set passed = stages.index(stage) < stages.index(current) if current in stages else False %}
+                    <div style="flex:1;text-align:center;position:relative;">
+                        {% if not loop.first %}
+                        <div style="position:absolute;top:16px;left:-50%;width:100%;height:2px;background:{% if passed or active %}var(--accent){% else %}var(--border){% endif %};z-index:0;"></div>
+                        {% endif %}
+                        <div style="width:32px;height:32px;border-radius:50%;border:2px solid {% if passed %}var(--accent3){% elif active %}var(--accent){% else %}var(--border){% endif %};background:{% if passed %}var(--accent3){% elif active %}var(--accent){% else %}var(--surface2){% endif %};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;position:relative;z-index:1;">
+                            {% if passed %}
+                            <i class="bi bi-check" style="color:#fff;font-size:0.9rem;"></i>
+                            {% elif active %}
+                            <div style="width:10px;height:10px;border-radius:50%;background:#fff;"></div>
+                            {% endif %}
+                        </div>
+                        <div style="font-size:0.72rem;font-weight:{% if active %}700{% else %}400{% endif %};color:{% if active %}var(--text){% else %}var(--text-muted){% endif %};">{{ stage }}</div>
+                    </div>
+                    {% endfor %}
+
+                    {% if current == 'Rejected' %}
+                    <div style="flex:1;text-align:center;">
+                        <div style="width:32px;height:32px;border-radius:50%;border:2px solid var(--accent2);background:var(--accent2);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+                            <i class="bi bi-x" style="color:#fff;font-size:0.9rem;"></i>
+                        </div>
+                        <div style="font-size:0.72rem;font-weight:700;color:var(--accent2);">Rejected</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview Rounds -->
+        {% if application.interview_rounds %}
+        <div class="card">
+            <div class="card-header"><i class="bi bi-people me-2 text-accent"></i>Interview Rounds</div>
+            <div class="card-body" style="padding:0;">
+                {% for round in application.interview_rounds %}
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div style="font-weight:700;">Round {{ round.round_number }} — {{ round.round_type }}</div>
+                        {% if round.result %}
+                        <span class="badge-status badge-{% if round.result == 'Pass' %}selected{% elif round.result == 'Fail' %}rejected{% else %}pending{% endif %}">
+                            {{ round.result }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if round.interview_date %}
+                    <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">
+                        <i class="bi bi-calendar3 me-1"></i>{{ round.interview_date }}
+                    </div>
+                    {% endif %}
+                    {% if round.feedback %}
+                    <div style="font-size:0.85rem;background:var(--surface2);border-radius:8px;padding:10px 14px;">
+                        {{ round.feedback }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <!-- Offer Card -->
+        {% if application.offer_id %}
+        <div class="card mb-4" style="border-color:rgba(67,233,123,0.3);">
+            <div class="card-header" style="color:var(--accent3);"><i class="bi bi-gift me-2"></i>Job Offer</div>
+            <div class="card-body">
+                <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--accent3);margin-bottom:8px;">
+                    ₹{{ '{:,.0f}'.format(application.salary) if application.salary else 'TBD' }}
+                </div>
+                <div style="font-size:0.82rem;color:var(--text-muted);">per year</div>
+                {% if application.joining_date %}
+                <div style="margin-top:12px;font-size:0.85rem;">
+                    <i class="bi bi-calendar-check me-1"></i>Joining: {{ application.joining_date }}
+                </div>
+                {% endif %}
+                <div style="margin-top:16px;">
+                    <span class="badge-status badge-{{ application.offer_status.lower() if application.offer_status else 'pending' }}">
+                        {{ application.offer_status or 'Pending' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Company Info -->
+        <div class="card">
+            <div class="card-header"><i class="bi bi-building me-2 text-accent"></i>Company</div>
+            <div class="card-body">
+                <div style="font-weight:700;margin-bottom:4px;">{{ application.company_name }}</div>
+                <div style="font-size:0.85rem;color:var(--text-muted);">{{ application.industry }}</div>
+                <hr class="divider my-3">
+                <div style="font-size:0.85rem;">Drive Date: {{ application.drive_date }}</div>
+                <div style="font-size:0.85rem;margin-top:4px;">Mode: {{ application.mode }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

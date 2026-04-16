@@ -1,0 +1,58 @@
+{% extends "admin/layout.html" %}
+{% block title %}Create Drive — PlacementHub Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Create Placement Drive</h2>
+    <p>Schedule a new placement drive for a company.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-calendar-plus me-2 text-accent"></i>Drive Details</div>
+            <div class="card-body" style="padding:32px;">
+                {% if error %}<div class="alert alert-danger mb-4"><i class="bi bi-exclamation-circle me-2"></i>{{ error }}</div>{% endif %}
+
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Company *</label>
+                            <select class="form-select" name="company_id" required>
+                                <option value="" disabled selected>Select Company</option>
+                                {% for company in companies %}
+                                <option value="{{ company.company_id }}">{{ company.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Drive Date *</label>
+                            <input type="date" class="form-control" name="drive_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Application Deadline *</label>
+                            <input type="date" class="form-control" name="deadline" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mode *</label>
+                            <select class="form-select" name="mode" required>
+                                <option value="Online">Online</option>
+                                <option value="Offline">Offline</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Venue</label>
+                            <input type="text" class="form-control" name="venue" placeholder="e.g. Main Auditorium">
+                        </div>
+                        <div class="col-12 mt-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-2"></i>Create Drive</button>
+                            <a href="/admin/drives" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

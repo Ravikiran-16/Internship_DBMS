@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Register — PlacementHub{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:40px 24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-200px;left:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(67,233,123,0.07) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <div style="width:100%;max-width:560px;">
+        <div style="text-align:center;margin-bottom:36px;">
+            <a href="/" style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;text-decoration:none;">
+                <span style="color:var(--accent);">Placement</span>Hub
+            </a>
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-top:8px;">Create your student account</p>
+        </div>
+
+        <div class="card" style="border-radius:20px;">
+            <div class="card-body" style="padding:36px;">
+                <form method="POST" id="registerForm">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Full Name</label>
+                            <div style="position:relative;">
+                                <i class="bi bi-person" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                                <input type="text" class="form-control" name="name" placeholder="John Doe" required style="padding-left:40px;" value="{{ form_data.get('name','') }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <div style="position:relative;">
+                                <i class="bi bi-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                                <input type="email" class="form-control" name="email" placeholder="you@example.com" required style="padding-left:40px;" value="{{ form_data.get('email','') }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <div style="position:relative;">
+                                <i class="bi bi-phone" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                                <input type="tel" class="form-control" name="phone" placeholder="9876543210" style="padding-left:40px;" value="{{ form_data.get('phone','') }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select class="form-select" name="department" required>
+                                <option value="" disabled {% if not form_data.get('department') %}selected{% endif %}>Select Department</option>
+                                {% for dept in ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil', 'Chemical', 'MBA', 'MCA'] %}
+                                <option value="{{ dept }}" {% if form_data.get('department') == dept %}selected{% endif %}>{{ dept }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">CGPA</label>
+                            <input type="number" class="form-control" name="cgpa" placeholder="8.5" step="0.01" min="0" max="10" required value="{{ form_data.get('cgpa','') }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Backlogs</label>
+                            <input type="number" class="form-control" name="backlogs" placeholder="0" min="0" value="{{ form_data.get('backlogs', 0) }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <div style="position:relative;">
+                                <i class="bi bi-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                                <input type="password" class="form-control" name="password" id="pw1" placeholder="Min. 6 characters" required style="padding-left:40px;" minlength="6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <div style="position:relative;">
+                                <i class="bi bi-lock-fill" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+                                <input type="password" class="form-control" name="confirm_password" id="pw2" placeholder="Repeat password" required style="padding-left:40px;">
+                            </div>
+                        </div>
+
+                        {% if error %}
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="col-12 mt-2">
+                            <button type="submit" class="btn btn-primary w-100" style="padding:12px;font-size:1rem;font-family:'Syne',sans-serif;font-weight:700;">
+                                Create Account <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div style="text-align:center;margin-top:24px;color:var(--text-muted);font-size:0.88rem;">
+                    Already have an account?
+                    <a href="/login" style="color:var(--accent);font-weight:600;text-decoration:none;">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const pw1 = document.getElementById('pw1').value;
+    const pw2 = document.getElementById('pw2').value;
+    if (pw1 !== pw2) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+    }
+});
+</script>
+{% endblock %}

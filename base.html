@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PlacementHub{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c27;
+            --border: #2a2a3d;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+            --accent3: #43e97b;
+            --text: #e8e8f0;
+            --text-muted: #8888aa;
+            --card-shadow: 0 4px 24px rgba(108,99,255,0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, .brand {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* ---- NAVBAR ---- */
+        .navbar {
+            background: rgba(19,19,26,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--text) !important;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand span { color: var(--accent); }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 6px 14px !important;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text) !important;
+            background: var(--surface2);
+        }
+
+        .nav-link i { margin-right: 6px; }
+
+        .btn-nav-accent {
+            background: var(--accent);
+            color: #fff !important;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .btn-nav-accent:hover { background: #5a52e0; color: #fff !important; }
+
+        /* ---- SIDEBAR ---- */
+        .sidebar {
+            width: 240px;
+            min-height: calc(100vh - 65px);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            top: 65px;
+            left: 0;
+        }
+
+        .sidebar-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0 10px;
+            margin: 16px 0 8px;
+        }
+
+        .sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px !important;
+            border-radius: 10px;
+            color: var(--text-muted) !important;
+            font-size: 0.88rem;
+            margin-bottom: 2px;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: var(--surface2);
+            color: var(--text) !important;
+        }
+
+        .sidebar .nav-link.active { 
+            color: var(--accent) !important;
+            background: rgba(108,99,255,0.12);
+        }
+
+        .sidebar .nav-link i { width: 20px; margin-right: 10px; font-size: 1rem; }
+
+        /* ---- MAIN CONTENT ---- */
+        .main-content {
+            margin-left: 240px;
+            padding: 32px;
+            min-height: calc(100vh - 65px);
+        }
+
+        /* ---- CARDS ---- */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
+
+        .card-body { padding: 24px; }
+
+        /* ---- STAT CARDS ---- */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(108,99,255,0.15);
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* ---- BUTTONS ---- */
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover { background: #5a52e0; transform: translateY(-1px); }
+
+        .btn-outline-primary {
+            border-color: var(--accent);
+            color: var(--accent);
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-danger { border-radius: 10px; }
+        .btn-success { border-radius: 10px; }
+        .btn-secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; }
+        .btn-secondary:hover { background: var(--border); color: var(--text); }
+        .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+        /* ---- FORMS ---- */
+        .form-control, .form-select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--surface2);
+            border-color: var(--accent);
+            color: var(--text);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+        }
+
+        .form-control::placeholder { color: var(--text-muted); }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ---- TABLES ---- */
+        .table {
+            color: var(--text);
+            font-size: 0.88rem;
+        }
+
+        .table thead th {
+            background: var(--surface2);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-color: var(--border);
+            padding: 12px 16px;
+        }
+
+        .table td {
+            border-color: var(--border);
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover { background: var(--surface2); }
+
+        /* ---- BADGES ---- */
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-applied { background: rgba(108,99,255,0.15); color: var(--accent); }
+        .badge-shortlisted { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .badge-selected { background: rgba(67,233,123,0.15); color: var(--accent3); }
+        .badge-rejected { background: rgba(255,101,132,0.15); color: var(--accent2); }
+        .badge-pending { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .badge-accepted { background: rgba(67,233,123,0.15); color: var(--accent3); }
+
+        /* ---- ALERTS ---- */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .alert-success { background: rgba(67,233,123,0.12); color: var(--accent3); }
+        .alert-danger { background: rgba(255,101,132,0.12); color: var(--accent2); }
+        .alert-info { background: rgba(108,99,255,0.12); color: var(--accent); }
+        .alert-warning { background: rgba(255,193,7,0.12); color: #ffc107; }
+
+        /* ---- PAGE HEADER ---- */
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+
+        /* ---- MISC ---- */
+        .text-accent { color: var(--accent); }
+        .text-muted { color: var(--text-muted) !important; }
+        .divider { border-color: var(--border); }
+
+        .avatar {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; color: #fff;
+            flex-shrink: 0;
+        }
+
+        .pill {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin: 2px;
+        }
+
+        /* ---- FLASH MESSAGES ---- */
+        .flash-container { position: fixed; top: 80px; right: 20px; z-index: 9999; width: 340px; }
+
+        /* ---- LOADING ---- */
+        .spinner-border-sm { width: 1rem; height: 1rem; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- Flash Messages -->
+<div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
+{% block navbar %}
+<!-- Default Navbar (shown when no sidebar) -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="/"><span>Placement</span>Hub</a>
+        <div class="ms-auto d-flex gap-2">
+            {% if session.get('token') %}
+                {% if session.get('user_type') == 'Student' %}
+                    <a href="/student/dashboard" class="nav-link">Dashboard</a>
+                {% else %}
+                    <a href="/admin/dashboard" class="nav-link">Dashboard</a>
+                {% endif %}
+                <a href="/logout" class="nav-link btn-nav-accent">Logout</a>
+            {% else %}
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/register" class="nav-link btn-nav-accent">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Auto-dismiss flash messages
+    setTimeout(() => {
+        document.querySelectorAll('.flash-container .alert').forEach(el => {
+            const bsAlert = new bootstrap.Alert(el);
+            bsAlert.close();
+        });
+    }, 4000);
+
+    // API Helper
+    const API_BASE = '';
+
+    async function apiCall(url, method = 'GET', data = null) {
+        const token = document.cookie.split('; ').find(r => r.startsWith('token='))?.split('=')[1];
+        const opts = {
+            method,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        if (token) opts.headers['Authorization'] = `Bearer ${token}`;
+        if (data) opts.body = JSON.stringify(data);
+        const res = await fetch(url, opts);
+        return res.json();
+    }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

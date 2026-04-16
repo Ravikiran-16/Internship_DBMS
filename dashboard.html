@@ -1,0 +1,137 @@
+{% extends "student/layout.html" %}
+{% block title %}Dashboard — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Welcome back, {{ session.get('user_name', 'Student').split()[0] }} 👋</h2>
+    <p>Here's your placement journey at a glance.</p>
+</div>
+
+<!-- Status Banner -->
+{% set status = stats.get('placement_status', 'Not Applied') %}
+<div style="background:{% if status == 'Placed' %}rgba(67,233,123,0.1){% elif status == 'Not Applied' %}rgba(108,99,255,0.1){% else %}rgba(255,193,7,0.1){% endif %};border:1px solid {% if status == 'Placed' %}rgba(67,233,123,0.3){% elif status == 'Not Applied' %}rgba(108,99,255,0.3){% else %}rgba(255,193,7,0.3){% endif %};border-radius:14px;padding:16px 24px;display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+    <div style="font-size:1.8rem;">{% if status == 'Placed' %}🎉{% elif status == 'Not Applied' %}🚀{% else %}⏳{% endif %}</div>
+    <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;">Placement Status: 
+            <span style="color:{% if status == 'Placed' %}var(--accent3){% elif status == 'Not Applied' %}var(--accent){% else %}#ffc107{% endif %};">{{ status }}</span>
+        </div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">
+            {% if status == 'Placed' %}Congratulations! You have accepted an offer.
+            {% elif status == 'Not Applied' %}Apply to placement drives to get started.
+            {% else %}You have active applications. Stay tuned!{% endif %}
+        </div>
+    </div>
+    {% if status == 'Not Applied' %}
+    <a href="/student/drives" class="btn btn-primary btn-sm ms-auto">Browse Drives</a>
+    {% endif %}
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(108,99,255,0.15);">
+                <i class="bi bi-file-earmark-text" style="color:var(--accent);"></i>
+            </div>
+            <div class="stat-value">{{ stats.get('total_applications', 0) }}</div>
+            <div class="stat-label">Total Applications</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(67,233,123,0.15);">
+                <i class="bi bi-gift" style="color:var(--accent3);"></i>
+            </div>
+            <div class="stat-value">{{ stats.get('total_offers', 0) }}</div>
+            <div class="stat-label">Offers Received</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(255,101,132,0.15);">
+                <i class="bi bi-stars" style="color:var(--accent2);"></i>
+            </div>
+            <div class="stat-value">{{ stats.get('total_skills', 0) }}</div>
+            <div class="stat-label">Skills Listed</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(255,193,7,0.15);">
+                <i class="bi bi-patch-check" style="color:#ffc107;"></i>
+            </div>
+            <div class="stat-value">{{ stats.get('applications_by_status', {}).get('Shortlisted', 0) }}</div>
+            <div class="stat-label">Shortlisted</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Application Status Breakdown -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-pie-chart me-2 text-accent"></i>Application Status</span>
+                <a href="/student/applications" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+            <div class="card-body">
+                {% set status_map = stats.get('applications_by_status', {}) %}
+                {% if status_map %}
+                    {% for s, count in status_map.items() %}
+                    <div style="margin-bottom:16px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                            <span style="font-size:0.85rem;font-weight:600;">{{ s }}</span>
+                            <span style="font-size:0.85rem;color:var(--text-muted);">{{ count }}</span>
+                        </div>
+                        {% set pct = ((count / stats.get('total_applications', 1)) * 100)|int %}
+                        <div style="background:var(--surface2);border-radius:4px;height:6px;">
+                            <div style="width:{{ pct }}%;height:100%;border-radius:4px;background:{% if s == 'Applied' %}var(--accent){% elif s == 'Shortlisted' %}#ffc107{% elif s == 'Selected' %}var(--accent3){% else %}var(--accent2){% endif %};"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center;padding:40px 0;color:var(--text-muted);">
+                        <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:12px;"></i>
+                        No applications yet.<br>
+                        <a href="/student/drives" style="color:var(--accent);">Browse drives to apply!</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Drives -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar-event me-2 text-accent"></i>Upcoming Drives</span>
+                <a href="/student/drives" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+            <div class="card-body" style="padding:0;">
+                {% if upcoming_drives %}
+                    {% for drive in upcoming_drives[:5] %}
+                    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);">
+                        <div style="width:42px;height:42px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-building" style="color:var(--accent);font-size:1.1rem;"></i>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ drive.company_name }}</div>
+                            <div style="color:var(--text-muted);font-size:0.78rem;">{{ drive.roles or 'Multiple Roles' }} · {{ drive.mode }}</div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;">
+                            <div style="font-size:0.78rem;color:var(--text-muted);">Deadline</div>
+                            <div style="font-size:0.82rem;font-weight:600;color:var(--accent2);">{{ drive.deadline }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center;padding:40px 0;color:var(--text-muted);">
+                        <i class="bi bi-calendar-x" style="font-size:2.5rem;display:block;margin-bottom:12px;"></i>
+                        No upcoming drives right now.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

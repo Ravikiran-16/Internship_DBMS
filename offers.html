@@ -1,0 +1,78 @@
+{% extends "student/layout.html" %}
+{% block title %}My Offers — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Job Offers</h2>
+    <p>Review and respond to your placement offers.</p>
+</div>
+
+{% set offers = applications | selectattr('offer_id') | list %}
+
+{% if offers %}
+<div class="row g-4">
+    {% for app in offers %}
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body" style="padding:24px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+                    <div>
+                        <h5 style="margin-bottom:4px;">{{ app.company_name }}</h5>
+                        <div style="color:var(--text-muted);font-size:0.82rem;">{{ app.industry }}</div>
+                    </div>
+                    <span class="badge-status badge-{{ app.offer_status.lower() if app.offer_status else 'pending' }}">
+                        {{ app.offer_status or 'Pending' }}
+                    </span>
+                </div>
+
+                <div style="background:var(--surface2);border-radius:12px;padding:16px;margin-bottom:16px;">
+                    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;">Offered Package</div>
+                    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--accent3);">
+                        ₹{{ '{:,.0f}'.format(app.salary) if app.salary else 'TBD' }}
+                        <span style="font-size:0.9rem;font-weight:400;color:var(--text-muted);">/year</span>
+                    </div>
+                </div>
+
+                {% if app.joining_date %}
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;color:var(--text-muted);font-size:0.85rem;">
+                    <i class="bi bi-calendar-check"></i>
+                    Joining Date: <strong style="color:var(--text);">{{ app.joining_date }}</strong>
+                </div>
+                {% endif %}
+
+                {% if app.offer_status == 'Pending' %}
+                <div style="display:flex;gap:8px;">
+                    <form method="POST" action="/student/offers/{{ app.offer_id }}/accept" style="flex:1;">
+                        <button type="submit" class="btn btn-success w-100" onclick="return confirm('Accept this offer?')">
+                            <i class="bi bi-check-lg me-1"></i>Accept
+                        </button>
+                    </form>
+                    <form method="POST" action="/student/offers/{{ app.offer_id }}/reject" style="flex:1;">
+                        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Reject this offer?')">
+                            <i class="bi bi-x-lg me-1"></i>Decline
+                        </button>
+                    </form>
+                </div>
+                {% elif app.offer_status == 'Accepted' %}
+                <div style="text-align:center;padding:10px;background:rgba(67,233,123,0.1);border-radius:10px;color:var(--accent3);font-weight:600;font-size:0.88rem;">
+                    <i class="bi bi-check-circle me-2"></i>You have accepted this offer 🎉
+                </div>
+                {% else %}
+                <div style="text-align:center;padding:10px;background:rgba(255,101,132,0.1);border-radius:10px;color:var(--accent2);font-weight:600;font-size:0.88rem;">
+                    <i class="bi bi-x-circle me-2"></i>Offer declined
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:80px 0;">
+    <div style="font-size:4rem;margin-bottom:16px;">🎁</div>
+    <h4 style="font-family:'Syne',sans-serif;margin-bottom:8px;">No offers yet</h4>
+    <p style="color:var(--text-muted);margin-bottom:20px;">Keep applying and performing well in interviews!</p>
+    <a href="/student/drives" class="btn btn-primary">Browse Drives</a>
+</div>
+{% endif %}
+{% endblock %}

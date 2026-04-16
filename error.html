@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }} — PlacementHub{% endblock %}
+{% block body %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;">
+    <div>
+        <div style="font-family:'Syne',sans-serif;font-size:6rem;font-weight:800;color:var(--border);line-height:1;">{{ code }}</div>
+        <h3 style="margin-bottom:12px;">{{ message }}</h3>
+        <p style="color:var(--text-muted);margin-bottom:24px;">Something went wrong. Please try again.</p>
+        <a href="/" class="btn btn-primary">Go Home</a>
+    </div>
+</div>
+{% endblock %}

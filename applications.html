@@ -1,0 +1,73 @@
+{% extends "student/layout.html" %}
+{% block title %}My Applications — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>My Applications</h2>
+    <p>Track the status of all your placement applications.</p>
+</div>
+
+{% if applications %}
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Drive Date</th>
+                        <th>Applied On</th>
+                        <th>Mode</th>
+                        <th>Status</th>
+                        <th>Offer</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>
+                            <div style="font-weight:600;">{{ app.company_name }}</div>
+                            <div style="font-size:0.78rem;color:var(--text-muted);">{{ app.industry }}</div>
+                        </td>
+                        <td style="font-size:0.85rem;">{{ app.drive_date }}</td>
+                        <td style="font-size:0.85rem;">{{ app.applied_at[:10] if app.applied_at else 'N/A' }}</td>
+                        <td><span class="pill">{{ app.mode }}</span></td>
+                        <td>
+                            <span class="badge-status badge-{{ app.status.lower() if app.status else 'applied' }}">
+                                {{ app.status or 'Applied' }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if app.offer_id %}
+                            <div>
+                                <div style="font-size:0.82rem;font-weight:600;">₹{{ '{:,.0f}'.format(app.salary) if app.salary else 'TBD' }}</div>
+                                <span class="badge-status badge-{{ app.offer_status.lower() if app.offer_status else 'pending' }}" style="font-size:0.7rem;">
+                                    {{ app.offer_status }}
+                                </span>
+                            </div>
+                            {% else %}
+                            <span style="color:var(--text-muted);font-size:0.82rem;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/student/applications/{{ app.application_id }}" class="btn btn-secondary btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="text-align:center;padding:80px 0;">
+    <div style="font-size:4rem;margin-bottom:16px;">📋</div>
+    <h4 style="font-family:'Syne',sans-serif;margin-bottom:8px;">No applications yet</h4>
+    <p style="color:var(--text-muted);margin-bottom:20px;">Start applying to placement drives to see your applications here.</p>
+    <a href="/student/drives" class="btn btn-primary">Browse Drives</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "student/layout.html" %}
+{% block title %}Browse Drives — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Placement Drives</h2>
+    <p>Browse and apply to available placement opportunities.</p>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body" style="padding:16px 24px;">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search Company</label>
+                <input type="text" class="form-control" name="search" placeholder="Company name..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Mode</label>
+                <select class="form-select" name="mode">
+                    <option value="">All Modes</option>
+                    <option value="Online" {% if request.args.get('mode') == 'Online' %}selected{% endif %}>Online</option>
+                    <option value="Offline" {% if request.args.get('mode') == 'Offline' %}selected{% endif %}>Offline</option>
+                    <option value="Hybrid" {% if request.args.get('mode') == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-2"></i>Search</button>
+            </div>
+            {% if request.args.get('search') or request.args.get('mode') %}
+            <div class="col-md-2">
+                <a href="/student/drives" class="btn btn-secondary w-100">Clear</a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if drives %}
+<div class="row g-4">
+    {% for drive in drives %}
+    <div class="col-md-6">
+        <div class="card h-100" style="transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(108,99,255,0.15)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+            <div class="card-body" style="padding:24px;">
+                <!-- Company Header -->
+                <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+                    <div style="width:50px;height:50px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">
+                        🏢
+                    </div>
+                    <div style="flex:1;">
+                        <h5 style="font-size:1rem;margin-bottom:2px;">{{ drive.company_name }}</h5>
+                        <div style="color:var(--text-muted);font-size:0.8rem;">
+                            <i class="bi bi-geo-alt me-1"></i>{{ drive.company_location or 'Location TBD' }}
+                            &nbsp;·&nbsp;
+                            <i class="bi bi-briefcase me-1"></i>{{ drive.industry or 'Industry N/A' }}
+                        </div>
+                    </div>
+                    <span class="badge-status badge-applied">{{ drive.mode }}</span>
+                </div>
+
+                <!-- Roles -->
+                {% if drive.roles %}
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Roles</div>
+                    <div>
+                        {% for role in drive.roles.split(', ') %}
+                        <span class="pill">{{ role }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Details -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                    <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;">
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px;">Drive Date</div>
+                        <div style="font-size:0.85rem;font-weight:600;">{{ drive.drive_date }}</div>
+                    </div>
+                    <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;">
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px;">Deadline</div>
+                        <div style="font-size:0.85rem;font-weight:600;color:var(--accent2);">{{ drive.deadline }}</div>
+                    </div>
+                    {% if drive.min_cgpa_required %}
+                    <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;">
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px;">Min CGPA</div>
+                        <div style="font-size:0.85rem;font-weight:600;">{{ drive.min_cgpa_required }}</div>
+                    </div>
+                    {% endif %}
+                    {% if drive.venue %}
+                    <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;">
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px;">Venue</div>
+                        <div style="font-size:0.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ drive.venue }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div style="display:flex;gap:8px;">
+                    <a href="/student/drives/{{ drive.drive_id }}" class="btn btn-outline-primary btn-sm flex-1">
+                        <i class="bi bi-eye me-1"></i>View Details
+                    </a>
+                    <a href="/student/apply/{{ drive.drive_id }}" class="btn btn-primary btn-sm flex-1">
+                        <i class="bi bi-send me-1"></i>Apply Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:80px 0;">
+    <div style="font-size:4rem;margin-bottom:16px;">🏢</div>
+    <h4 style="font-family:'Syne',sans-serif;margin-bottom:8px;">No drives available</h4>
+    <p style="color:var(--text-muted);">Check back later for new placement opportunities.</p>
+</div>
+{% endif %}
+{% endblock %}

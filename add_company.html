@@ -1,0 +1,54 @@
+{% extends "admin/layout.html" %}
+{% block title %}Add Company — PlacementHub Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Add Company</h2>
+    <p>Register a new recruiting company.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-building-add me-2 text-accent"></i>Company Details</div>
+            <div class="card-body" style="padding:32px;">
+                {% if error %}<div class="alert alert-danger mb-4"><i class="bi bi-exclamation-circle me-2"></i>{{ error }}</div>{% endif %}
+
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Company Name *</label>
+                            <input type="text" class="form-control" name="name" placeholder="e.g. Google, Microsoft" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" placeholder="e.g. Bangalore, Mumbai">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Industry</label>
+                            <select class="form-select" name="industry">
+                                <option value="">Select Industry</option>
+                                {% for ind in ['Technology', 'Finance', 'Healthcare', 'Manufacturing', 'Consulting', 'E-commerce', 'Telecom', 'Education', 'Other'] %}
+                                <option value="{{ ind }}">{{ ind }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Website</label>
+                            <input type="text" class="form-control" name="website" placeholder="www.company.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">HR Contact Email</label>
+                            <input type="email" class="form-control" name="hr_contact" placeholder="hr@company.com">
+                        </div>
+                        <div class="col-12 mt-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-2"></i>Add Company</button>
+                            <a href="/admin/companies" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

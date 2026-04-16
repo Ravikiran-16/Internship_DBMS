@@ -1,0 +1,95 @@
+{% extends "admin/layout.html" %}
+{% block title %}Students — PlacementHub Admin{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-start">
+    <div>
+        <h2>All Students</h2>
+        <p>Manage registered students and their placement status.</p>
+    </div>
+</div>
+
+<!-- Search/Filter -->
+<div class="card mb-4">
+    <div class="card-body" style="padding:16px 24px;">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="search" placeholder="Name or email..." value="{{ request.args.get('search','') }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Department</label>
+                <select class="form-select" name="dept">
+                    <option value="">All Departments</option>
+                    {% for dept in ['Computer Science','Information Technology','Electronics','Mechanical','Civil','Chemical','MBA','MCA'] %}
+                    <option value="{{ dept }}" {% if request.args.get('dept') == dept %}selected{% endif %}>{{ dept }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i>Search</button>
+            </div>
+            {% if request.args.get('search') or request.args.get('dept') %}
+            <div class="col-md-2">
+                <a href="/admin/students" class="btn btn-secondary w-100">Clear</a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Department</th>
+                        <th>CGPA</th>
+                        <th>Backlogs</th>
+                        <th>Phone</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if students %}
+                    {% for s in students %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div class="avatar" style="width:34px;height:34px;border-radius:8px;font-size:0.8rem;">
+                                    {{ s.name[0].upper() if s.name else '?' }}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.88rem;">{{ s.name }}</div>
+                                    <div style="font-size:0.75rem;color:var(--text-muted);">{{ s.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-size:0.85rem;">{{ s.department }}</td>
+                        <td>
+                            <span class="badge-status badge-{% if s.cgpa >= 8 %}selected{% elif s.cgpa >= 7 %}shortlisted{% else %}applied{% endif %}">
+                                {{ s.cgpa }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge-status {% if s.backlogs == 0 %}badge-selected{% else %}badge-rejected{% endif %}">
+                                {{ s.backlogs }}
+                            </span>
+                        </td>
+                        <td style="font-size:0.85rem;">{{ s.phone or '—' }}</td>
+                        <td style="font-size:0.82rem;color:var(--text-muted);">{{ s.created_at[:10] if s.created_at else 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No students found.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

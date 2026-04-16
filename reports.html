@@ -1,0 +1,178 @@
+{% extends "admin/layout.html" %}
+{% block title %}Reports — PlacementHub Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Analytics & Reports</h2>
+    <p>Comprehensive placement statistics and insights.</p>
+</div>
+
+<!-- Tab Nav -->
+<div style="display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:28px;width:fit-content;">
+    {% for tab, label, icon in [('summary','Placement Summary','bi-person-check'),('drives','Drive Stats','bi-calendar-event'),('skills','Student Skills','bi-stars')] %}
+    <button onclick="showTab('{{ tab }}')" id="tab-{{ tab }}"
+        style="border:none;border-radius:9px;padding:10px 18px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;
+        {% if loop.first %}background:var(--accent);color:#fff;{% else %}background:transparent;color:var(--text-muted);{% endif %}">
+        <i class="bi {{ icon }} me-2"></i>{{ label }}
+    </button>
+    {% endfor %}
+</div>
+
+<!-- Placement Summary Tab -->
+<div id="tab-content-summary">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-check me-2 text-accent"></i>Placement Summary</span>
+            <a href="/admin/reports/export?type=summary" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-download me-1"></i>Export
+            </a>
+        </div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Department</th>
+                            <th>CGPA</th>
+                            <th>Company</th>
+                            <th>Offered Salary</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if placement_summary %}
+                        {% for row in placement_summary %}
+                        <tr>
+                            <td style="font-weight:600;font-size:0.88rem;">{{ row.get('name') or row.get('Student_Name','—') }}</td>
+                            <td style="font-size:0.85rem;">{{ row.get('department') or row.get('Department','—') }}</td>
+                            <td>
+                                {% set cgpa = row.get('cgpa') or row.get('CGPA',0) %}
+                                <span class="badge-status badge-{% if cgpa >= 8 %}selected{% elif cgpa >= 7 %}shortlisted{% else %}applied{% endif %}">
+                                    {{ cgpa }}
+                                </span>
+                            </td>
+                            <td style="font-size:0.85rem;">{{ row.get('company_name') or row.get('Company_Name','—') }}</td>
+                            <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent3);">
+                                {% set sal = row.get('salary') or row.get('Offered_Salary') %}
+                                {% if sal %}₹{{ '{:,.0f}'.format(sal) }}{% else %}—{% endif %}
+                            </td>
+                            <td>
+                                {% set st = row.get('offer_status') or row.get('Offer_Status','—') %}
+                                <span class="badge-status badge-{{ st.lower() if st else 'applied' }}">{{ st }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No placement data available yet.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Drive Stats Tab -->
+<div id="tab-content-drives" style="display:none;">
+    <div class="card">
+        <div class="card-header"><i class="bi bi-calendar-event me-2 text-accent"></i>Drive Statistics</div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Drive Date</th>
+                            <th>Mode</th>
+                            <th>Total Applications</th>
+                            <th>Shortlisted</th>
+                            <th>Selected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if drive_stats %}
+                        {% for row in drive_stats %}
+                        <tr>
+                            <td style="font-weight:600;font-size:0.88rem;">{{ row.get('company_name') or row.get('Company','—') }}</td>
+                            <td style="font-size:0.85rem;">{{ row.get('drive_date','—') }}</td>
+                            <td><span class="pill">{{ row.get('mode','—') }}</span></td>
+                            <td>
+                                <span style="font-family:'Syne',sans-serif;font-weight:700;">
+                                    {{ row.get('total_applications') or row.get('Total_Applications',0) }}
+                                </span>
+                            </td>
+                            <td>{{ row.get('shortlisted') or row.get('Shortlisted',0) }}</td>
+                            <td>
+                                <span class="badge-status badge-selected">
+                                    {{ row.get('selected') or row.get('Selected',0) }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No drive statistics available.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skills Tab -->
+<div id="tab-content-skills" style="display:none;">
+    <div class="card">
+        <div class="card-header"><i class="bi bi-stars me-2 text-accent"></i>Student Skills Overview</div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Department</th>
+                            <th>Skills</th>
+                            <th>Proficiency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if student_skills %}
+                        {% for row in student_skills %}
+                        <tr>
+                            <td style="font-weight:600;font-size:0.88rem;">{{ row.get('name','—') }}</td>
+                            <td style="font-size:0.85rem;">{{ row.get('department','—') }}</td>
+                            <td>
+                                {% for skill in (row.get('skills') or row.get('skill_name','')).split(',') %}
+                                <span class="pill" style="margin:1px;">{{ skill.strip() }}</span>
+                                {% endfor %}
+                            </td>
+                            <td style="font-size:0.82rem;">{{ row.get('proficiency_level','—') }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">No skills data available.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tab) {
+    ['summary','drives','skills'].forEach(t => {
+        document.getElementById(`tab-content-${t}`).style.display = t === tab ? 'block' : 'none';
+        const btn = document.getElementById(`tab-${t}`);
+        btn.style.background = t === tab ? 'var(--accent)' : 'transparent';
+        btn.style.color = t === tab ? '#fff' : 'var(--text-muted)';
+    });
+}
+</script>
+{% endblock %}

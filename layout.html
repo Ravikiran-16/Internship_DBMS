@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="/student/dashboard"><span>Placement</span>Hub</a>
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="avatar">{{ session.get('user_name', 'S')[0].upper() }}</div>
+                <div>
+                    <div style="font-size:0.85rem;font-weight:600;">{{ session.get('user_name', 'Student') }}</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">Student</div>
+                </div>
+            </div>
+            <a href="/logout" class="btn btn-secondary btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-label">Main</div>
+    <a href="/student/dashboard" class="nav-link {% if request.path == '/student/dashboard' %}active{% endif %}">
+        <i class="bi bi-grid-1x2"></i> Dashboard
+    </a>
+    <a href="/student/profile" class="nav-link {% if '/profile' in request.path %}active{% endif %}">
+        <i class="bi bi-person"></i> My Profile
+    </a>
+    <a href="/student/skills" class="nav-link {% if '/skills' in request.path %}active{% endif %}">
+        <i class="bi bi-stars"></i> Skills
+    </a>
+
+    <div class="sidebar-label">Placement</div>
+    <a href="/student/drives" class="nav-link {% if '/drives' in request.path %}active{% endif %}">
+        <i class="bi bi-building"></i> Browse Drives
+    </a>
+    <a href="/student/applications" class="nav-link {% if '/applications' in request.path %}active{% endif %}">
+        <i class="bi bi-file-earmark-text"></i> My Applications
+    </a>
+    <a href="/student/offers" class="nav-link {% if '/offers' in request.path %}active{% endif %}">
+        <i class="bi bi-gift"></i> Offers
+    </a>
+
+    <div class="sidebar-label">Account</div>
+    <a href="/student/resume" class="nav-link {% if '/resume' in request.path %}active{% endif %}">
+        <i class="bi bi-upload"></i> Upload Resume
+    </a>
+    <a href="/logout" class="nav-link" style="color:var(--accent2) !important;">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "student/layout.html" %}
+{% block title %}Drive Details — PlacementHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="/student/drives" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">
+        <i class="bi bi-arrow-left me-1"></i>Back to Drives
+    </a>
+    <h2 class="mt-2">{{ drive.company_name }}</h2>
+    <p>{{ drive.industry }} · {{ drive.company_location }}</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-info-circle me-2 text-accent"></i>Drive Information</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div style="background:var(--surface2);border-radius:10px;padding:14px;">
+                            <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;">Drive Date</div>
+                            <div style="font-weight:600;">{{ drive.drive_date }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background:var(--surface2);border-radius:10px;padding:14px;">
+                            <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;">Application Deadline</div>
+                            <div style="font-weight:600;color:var(--accent2);">{{ drive.deadline }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background:var(--surface2);border-radius:10px;padding:14px;">
+                            <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;">Mode</div>
+                            <div style="font-weight:600;">{{ drive.mode }}</div>
+                        </div>
+                    </div>
+                    {% if drive.venue %}
+                    <div class="col-md-6">
+                        <div style="background:var(--surface2);border-radius:10px;padding:14px;">
+                            <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;">Venue</div>
+                            <div style="font-weight:600;">{{ drive.venue }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if drive.job_roles %}
+        <div class="card">
+            <div class="card-header"><i class="bi bi-briefcase me-2 text-accent"></i>Available Roles</div>
+            <div class="card-body" style="padding:0;">
+                {% for role in drive.job_roles %}
+                <div style="padding:20px 24px;border-bottom:1px solid var(--border);">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                        <div>
+                            <div style="font-weight:700;font-size:1rem;">{{ role.role_name }}</div>
+                            <div style="color:var(--text-muted);font-size:0.82rem;">{{ role.job_type }}</div>
+                        </div>
+                        {% if role.salary_range %}
+                        <span style="background:rgba(67,233,123,0.12);color:var(--accent3);border-radius:20px;padding:4px 14px;font-size:0.82rem;font-weight:700;">
+                            {{ role.salary_range }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div style="display:flex;gap:16px;font-size:0.82rem;">
+                        <span style="color:var(--text-muted);">
+                            <i class="bi bi-mortarboard me-1"></i>Min CGPA: <strong>{{ role.min_cgpa }}</strong>
+                        </span>
+                    </div>
+                    {% if role.description %}
+                    <div style="margin-top:10px;font-size:0.85rem;color:var(--text-muted);">{{ role.description }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <!-- Company Info -->
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-building me-2 text-accent"></i>Company</div>
+            <div class="card-body">
+                <h5 style="margin-bottom:8px;">{{ drive.company_name }}</h5>
+                {% if drive.company_location %}
+                <div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:6px;">
+                    <i class="bi bi-geo-alt me-1"></i>{{ drive.company_location }}
+                </div>
+                {% endif %}
+                {% if drive.industry %}
+                <div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:6px;">
+                    <i class="bi bi-briefcase me-1"></i>{{ drive.industry }}
+                </div>
+                {% endif %}
+                {% if drive.website %}
+                <div style="font-size:0.85rem;margin-bottom:6px;">
+                    <i class="bi bi-globe me-1" style="color:var(--text-muted);"></i>
+                    <a href="https://{{ drive.website }}" target="_blank" style="color:var(--accent);">{{ drive.website }}</a>
+                </div>
+                {% endif %}
+                {% if drive.hr_contact %}
+                <div style="font-size:0.85rem;">
+                    <i class="bi bi-envelope me-1" style="color:var(--text-muted);"></i>
+                    {{ drive.hr_contact }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Eligibility -->
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-patch-check me-2 text-accent"></i>Your Eligibility</div>
+            <div class="card-body">
+                {% if eligibility %}
+                <div style="text-align:center;padding:16px 0;">
+                    <div style="font-size:3rem;margin-bottom:8px;">
+                        {% if eligibility.eligible %}✅{% else %}❌{% endif %}
+                    </div>
+                    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">
+                        {% if eligibility.eligible %}You are eligible!{% else %}Not eligible{% endif %}
+                    </div>
+                    <div style="font-size:0.82rem;color:var(--text-muted);">
+                        Your CGPA: <strong>{{ eligibility.student_cgpa }}</strong> ·
+                        Required: <strong>{{ eligibility.required_cgpa or 'N/A' }}</strong>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Apply Button -->
+        {% if eligibility and eligibility.eligible %}
+        <a href="/student/apply/{{ drive.drive_id }}" class="btn btn-primary w-100" style="padding:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;">
+            <i class="bi bi-send me-2"></i>Apply Now
+        </a>
+        {% else %}
+        <button class="btn btn-secondary w-100" disabled style="padding:14px;">
+            <i class="bi bi-x-circle me-2"></i>Not Eligible
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
