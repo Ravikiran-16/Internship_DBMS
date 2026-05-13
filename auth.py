@@ -6,7 +6,7 @@ from utils.db import execute_query
 from config import Config
 
 auth_bp = Blueprint('auth', __name__)
-
+#auth
 @auth_bp.route('/register', methods=['POST'])
 def register_student():
     """
